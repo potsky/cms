@@ -154,6 +154,30 @@ class CoreModifiers extends Modifier
     {
         return Stringy::at($value, Arr::get($params, 0));
     }
+ 
+    /**
+     * Returns the attribute ($params[0]) that corresponds to the given value, only when this provided $value is not empty.
+     * eg: when `var` equals `"statamic is awesome"`, then `{{ var | attribute:class }}` returns ` class="statamic is awesome"`
+     *     when `var` is empty, then `{{ var | attribute:class }}` returns `''`
+     *
+     * @param  string  $value
+     * @param  array  $params
+     * @return string
+     */
+    public function attribute(string $value, array $params)
+    {
+        if (! $name = Arr::get($params, 0)) {
+            throw new \Exception('Attribute modifier requires the attribute name: {{ value | attribute:attribute-name }}');
+        }
+
+        $value = trim($value);
+
+        if (empty($value)) {
+            return '';
+        }
+
+        return sprintf(' %s="%s"', $name, Html::entities($value));
+    }
 
     /**
      * Returns a focal point as a background-position CSS value.
